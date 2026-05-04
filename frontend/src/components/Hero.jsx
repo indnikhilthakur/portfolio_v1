@@ -5,6 +5,7 @@ import { profile } from "../data/mock";
 import MagneticButton from "./effects/MagneticButton";
 import CountUp from "./effects/CountUp";
 import SplitText from "./effects/SplitText";
+import HeroBackground from "./effects/HeroBackground";
 
 const MARQUEE_TAGS = [
   "SNOWFLAKE",
@@ -56,8 +57,11 @@ const Hero = () => {
       id="top"
       className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-16"
     >
-      {/* Grid background with vignette */}
-      <div className="absolute inset-0 bg-grid mask-radial opacity-80" />
+      {/* Subtle grid base */}
+      <div className="absolute inset-0 bg-grid mask-radial opacity-40" />
+
+      {/* Interactive lattice + particles */}
+      <HeroBackground />
 
       {/* Cyan glow orb */}
       <motion.div

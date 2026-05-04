@@ -50,12 +50,12 @@ const About = () => {
               className="mt-10 grid grid-cols-2 sm:grid-cols-3 gap-px bg-white/5 border border-white/5"
             >
               {[
-                { k: "Currently", v: "Staff @ Northwind" },
-                { k: "Timezone", v: "CET / UTC+1" },
-                { k: "Languages", v: "EN / DE" },
-                { k: "Side bets", v: "OSS, audio tools" },
+                { k: "Currently", v: "Tech Lead @ Coridors" },
+                { k: "Specialty", v: "Snowflake Native Apps" },
+                { k: "Timezone", v: "IST · UTC+5:30" },
+                { k: "Open to", v: "Founding / Staff roles" },
                 { k: "Reading", v: "Designing Data-Intensive Apps" },
-                { k: "Listening", v: "Synthwave, ambient" },
+                { k: "Community", v: "Snowflake Superhero" },
               ].map((row) => (
                 <div
                   key={row.k}

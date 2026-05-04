@@ -4,16 +4,16 @@ import { ArrowDownRight, MoveRight, MapPin } from "lucide-react";
 import { profile } from "../data/mock";
 
 const MARQUEE_TAGS = [
-  "REACT",
-  "// TYPESCRIPT",
-  "// FRAMER MOTION",
-  "// FASTAPI",
-  "// POSTGRES",
+  "SNOWFLAKE",
+  "// SNOWPARK",
+  "// NATIVE APPS",
+  "// PYTHON",
+  "// DJANGO",
+  "// CORTEX",
+  "// RAG",
+  "// LANGCHAIN",
   "// AWS",
-  "// DESIGN SYSTEMS",
-  "// REALTIME",
-  "// WEBGL",
-  "// PERFORMANCE",
+  "// STREAMLIT",
 ];
 // Pre-build duplicated list at module scope (used to create seamless marquee).
 const MARQUEE_ITEMS = [
@@ -92,9 +92,9 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.05 }}
             className="font-semibold tracking-tight leading-[0.95] text-[clamp(2.6rem,7.5vw,6.2rem)]"
           >
-            <span className="block text-white/95">{profile.name.split(" ")[0]}</span>
+            <span className="block text-white/95">{profile.firstName}</span>
             <span className="block text-white/40">
-              {profile.name.split(" ")[1]}
+              {profile.lastName}
               <span className="text-cyan-400 neon-text">.</span>
             </span>
           </motion.h1>
@@ -140,7 +140,7 @@ const Hero = () => {
               <span className="w-2.5 h-2.5 rounded-full bg-white/10" />
               <span className="w-2.5 h-2.5 rounded-full bg-cyan-400/70" />
               <span className="ml-3 font-mono text-[10px] tracking-widest text-white/40">
-                ~/alex — zsh
+                ~/nikhil — zsh
               </span>
             </div>
             <div className="p-5 font-mono text-[12.5px] leading-7 text-white/80">
@@ -149,7 +149,7 @@ const Hero = () => {
                 <span className="text-white">whoami</span>
               </p>
               <p className="text-white/60">
-                engineer / designer / pragmatist
+                founding engineer / snowflake native app builder
               </p>
               <p className="mt-3">
                 <span className="text-cyan-400">$</span>{" "}
@@ -157,7 +157,7 @@ const Hero = () => {
               </p>
               <p
                 ref={codeRef}
-                data-text='{ "frontend": ["react", "next", "motion"], "backend": ["node", "python", "postgres"], "infra": ["vercel", "aws"] }'
+                data-text='{ "data": ["snowflake", "snowpark", "cortex"], "backend": ["python", "django", "flask"], "ai": ["langchain", "rag", "tensorflow"] }'
                 className="text-cyan-200/80 break-all"
               />
               <p className="mt-3">
@@ -166,7 +166,7 @@ const Hero = () => {
               </p>
               <p className="text-emerald-300/90 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot" />
-                open to select roles & collaborations
+                building Flow @ Coridors · open to collabs
               </p>
               <p className="mt-3">
                 <span className="text-cyan-400">$</span> <span className="animate-pulse">_</span>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ArrowUp, Github, Linkedin, Twitter } from "lucide-react";
+import { ArrowUp, Github, Linkedin, Mail } from "lucide-react";
 import { profile } from "../data/mock";
 
 const Footer = () => {
@@ -8,7 +8,7 @@ const Footer = () => {
   useEffect(() => {
     const update = () => {
       const t = new Date().toLocaleTimeString("en-GB", {
-        timeZone: "Europe/Berlin",
+        timeZone: "Asia/Kolkata",
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
@@ -40,7 +40,7 @@ const Footer = () => {
             {[
               { Icon: Github, href: profile.socials.github, label: "GitHub" },
               { Icon: Linkedin, href: profile.socials.linkedin, label: "LinkedIn" },
-              { Icon: Twitter, href: profile.socials.x, label: "X" },
+              { Icon: Mail, href: profile.socials.email, label: "Email" },
             ].map(({ Icon, href, label }) => (
               <a
                 key={label}
@@ -72,7 +72,7 @@ const Footer = () => {
               SYS_ONLINE
             </span>
             <span className="text-white/20">|</span>
-            <span>BER {time}</span>
+            <span>IST {time}</span>
           </div>
         </div>
       </div>

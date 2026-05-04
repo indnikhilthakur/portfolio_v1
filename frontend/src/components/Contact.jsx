@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Github, Linkedin, Twitter, Mail, Copy, Check } from "lucide-react";
+import { Send, Github, Linkedin, Mail, Copy, Check, Phone } from "lucide-react";
 import { profile } from "../data/mock";
 import { toast } from "sonner";
 
@@ -84,7 +84,7 @@ const Contact = () => {
               {[
                 { Icon: Github, href: profile.socials.github, label: "GitHub" },
                 { Icon: Linkedin, href: profile.socials.linkedin, label: "LinkedIn" },
-                { Icon: Twitter, href: profile.socials.x, label: "X" },
+                { Icon: Phone, href: `tel:${profile.phone.replace(/\s/g, "")}`, label: "Phone" },
               ].map(({ Icon, href, label }) => (
                 <a
                   key={label}

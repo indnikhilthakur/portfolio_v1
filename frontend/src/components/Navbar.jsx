@@ -49,7 +49,7 @@ const Navbar = () => {
             <Terminal className="w-3.5 h-3.5 text-cyan-300" strokeWidth={2} />
           </span>
           <span className="font-mono text-xs tracking-[0.2em] text-white/80 group-hover:text-white transition">
-            ALEX.MERCER
+            NIKHIL.THAKUR
           </span>
         </a>
 

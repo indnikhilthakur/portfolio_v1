@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { skills } from "../data/mock";
+import { ShieldCheck } from "lucide-react";
+import { skills, certifications } from "../data/mock";
 
 const TILE_INITIAL = { opacity: 0, y: 16 };
 const TILE_VISIBLE = { opacity: 1, y: 0 };
@@ -59,6 +60,32 @@ const Skills = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* Certifications strip */}
+        <motion.div
+          initial={TILE_INITIAL}
+          whileInView={TILE_VISIBLE}
+          viewport={TILE_VIEWPORT}
+          transition={{ duration: 0.6 }}
+          className="mt-10 border border-white/5 bg-[#0a0c10] p-6"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <ShieldCheck className="w-3.5 h-3.5 text-cyan-300" />
+            <span className="font-mono text-[10px] tracking-widest text-cyan-300/80 uppercase">
+              Certifications
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {certifications.map((c) => (
+              <span
+                key={c}
+                className="font-mono text-[11px] tracking-wide px-3 py-1.5 border border-white/10 text-white/75 rounded-sm bg-white/[0.02] hover:border-cyan-400/40 hover:text-white transition"
+              >
+                {c}
+              </span>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </section>
   );

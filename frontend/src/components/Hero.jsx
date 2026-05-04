@@ -5,7 +5,8 @@ import { profile } from "../data/mock";
 import MagneticButton from "./effects/MagneticButton";
 import CountUp from "./effects/CountUp";
 import SplitText from "./effects/SplitText";
-import HeroBackground from "./effects/HeroBackground";
+import HeroBackground from "./effects/HeroBackground"; // eslint-disable-line no-unused-vars
+import SnowflakeLattice from "./effects/SnowflakeLattice";
 
 const MARQUEE_TAGS = [
   "SNOWFLAKE",
@@ -60,8 +61,10 @@ const Hero = () => {
       {/* Subtle grid base */}
       <div className="absolute inset-0 bg-grid mask-radial opacity-40" />
 
-      {/* Interactive lattice + particles */}
-      <HeroBackground />
+      {/* Active hero background — Option 1: pure Snowflake Data Lattice */}
+      <SnowflakeLattice />
+      {/* Alt: Hybrid Lattice + Particles. Swap by commenting line above and uncommenting below */}
+      {/* <HeroBackground /> */}
 
       {/* Cyan glow orb */}
       <motion.div

@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { projects } from "../data/mock";
 
+const CARD_INITIAL = { opacity: 0, y: 22 };
+const CARD_VISIBLE = { opacity: 1, y: 0 };
+const CARD_VIEWPORT = { once: true, amount: 0.2 };
+
 const Projects = () => {
   return (
     <section id="work" className="relative py-28 md:py-36 border-t border-white/5">
@@ -25,9 +29,9 @@ const Projects = () => {
             <motion.a
               key={p.id}
               href={p.href}
-              initial={{ opacity: 0, y: 22 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
+              initial={CARD_INITIAL}
+              whileInView={CARD_VISIBLE}
+              viewport={CARD_VIEWPORT}
               transition={{ duration: 0.6, delay: (i % 2) * 0.08 }}
               className="group relative card-tile corner-brackets rounded-sm overflow-hidden"
             >

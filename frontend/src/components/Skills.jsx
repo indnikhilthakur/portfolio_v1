@@ -2,6 +2,10 @@ import React from "react";
 import { motion } from "framer-motion";
 import { skills } from "../data/mock";
 
+const TILE_INITIAL = { opacity: 0, y: 16 };
+const TILE_VISIBLE = { opacity: 1, y: 0 };
+const TILE_VIEWPORT = { once: true, amount: 0.3 };
+
 const Skills = () => {
   return (
     <section id="skills" className="relative py-28 md:py-36 border-t border-white/5">
@@ -24,9 +28,9 @@ const Skills = () => {
           {skills.map((s, idx) => (
             <motion.div
               key={s.group}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
+              initial={TILE_INITIAL}
+              whileInView={TILE_VISIBLE}
+              viewport={TILE_VIEWPORT}
               transition={{ duration: 0.5, delay: idx * 0.06 }}
               className="relative bg-[#0a0c10] p-6 group hover:bg-[#0d1015] transition"
             >

@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import { experience } from "../data/mock";
 import { CornerDownRight } from "lucide-react";
 
+const ITEM_INITIAL = { opacity: 0, x: -16 };
+const ITEM_VISIBLE = { opacity: 1, x: 0 };
+const ITEM_VIEWPORT = { once: true, amount: 0.3 };
+
 const Experience = () => {
   return (
     <section id="path" className="relative py-28 md:py-36 border-t border-white/5">
@@ -22,9 +26,9 @@ const Experience = () => {
             {experience.map((e, idx) => (
               <motion.li
                 key={e.id}
-                initial={{ opacity: 0, x: -16 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
+                initial={ITEM_INITIAL}
+                whileInView={ITEM_VISIBLE}
+                viewport={ITEM_VIEWPORT}
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
                 className="relative pl-12 md:pl-16"
               >
@@ -44,9 +48,9 @@ const Experience = () => {
                   {e.period} · {e.location}
                 </div>
                 <ul className="mt-4 space-y-2">
-                  {e.bullets.map((b, j) => (
+                  {e.bullets.map((b) => (
                     <li
-                      key={j}
+                      key={b.slice(0, 30)}
                       className="flex items-start gap-2 text-white/65 leading-relaxed"
                     >
                       <CornerDownRight className="w-3.5 h-3.5 mt-1.5 text-cyan-400/60 shrink-0" />

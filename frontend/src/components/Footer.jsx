@@ -38,12 +38,12 @@ const Footer = () => {
 
           <div className="flex items-center gap-3">
             {[
-              { Icon: Github, href: profile.socials.github },
-              { Icon: Linkedin, href: profile.socials.linkedin },
-              { Icon: Twitter, href: profile.socials.x },
-            ].map(({ Icon, href }, i) => (
+              { Icon: Github, href: profile.socials.github, label: "GitHub" },
+              { Icon: Linkedin, href: profile.socials.linkedin, label: "LinkedIn" },
+              { Icon: Twitter, href: profile.socials.x, label: "X" },
+            ].map(({ Icon, href, label }) => (
               <a
-                key={i}
+                key={label}
                 href={href}
                 target="_blank"
                 rel="noreferrer"

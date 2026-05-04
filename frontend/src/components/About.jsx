@@ -31,7 +31,7 @@ const About = () => {
             <div className="space-y-6 text-lg leading-relaxed text-white/70">
               {profile.about.map((p, i) => (
                 <motion.p
-                  key={i}
+                  key={p.slice(0, 24)}
                   initial={{ opacity: 0, y: 14 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}

@@ -3,6 +3,24 @@ import { motion } from "framer-motion";
 import { ArrowDownRight, MoveRight, MapPin } from "lucide-react";
 import { profile } from "../data/mock";
 
+const MARQUEE_TAGS = [
+  "REACT",
+  "// TYPESCRIPT",
+  "// FRAMER MOTION",
+  "// FASTAPI",
+  "// POSTGRES",
+  "// AWS",
+  "// DESIGN SYSTEMS",
+  "// REALTIME",
+  "// WEBGL",
+  "// PERFORMANCE",
+];
+// Pre-build duplicated list at module scope (used to create seamless marquee).
+const MARQUEE_ITEMS = [
+  ...MARQUEE_TAGS.map((t, i) => ({ key: `a-${i}`, t })),
+  ...MARQUEE_TAGS.map((t, i) => ({ key: `b-${i}`, t })),
+];
+
 const Hero = () => {
   const codeRef = useRef(null);
 
@@ -175,24 +193,11 @@ const Hero = () => {
       {/* Bottom marquee */}
       <div className="absolute bottom-0 left-0 right-0 border-t border-white/5 bg-[#08090b]/80 overflow-hidden">
         <div className="marquee py-3 font-mono text-[11px] tracking-[0.3em] uppercase text-white/30">
-          {Array.from({ length: 2 }).flatMap((_, k) =>
-            [
-              "REACT",
-              "// TYPESCRIPT",
-              "// FRAMER MOTION",
-              "// FASTAPI",
-              "// POSTGRES",
-              "// AWS",
-              "// DESIGN SYSTEMS",
-              "// REALTIME",
-              "// WEBGL",
-              "// PERFORMANCE",
-            ].map((t) => (
-              <span key={`${k}-${t}`} className="shrink-0">
-                {t}
-              </span>
-            ))
-          )}
+          {MARQUEE_ITEMS.map((m) => (
+            <span key={m.key} className="shrink-0">
+              {m.t}
+            </span>
+          ))}
         </div>
       </div>
     </section>

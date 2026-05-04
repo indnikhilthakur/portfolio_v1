@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #08090b;
+  --bg-2: #0d0f13;
+  --bg-3: #14171d;
+  --fg: #e7e9ee;
+  --fg-dim: #9ca3af;
+  --fg-mute: #555a66;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.14);
+  --neon: #00e5ff;
+  --neon-soft: rgba(0, 229, 255, 0.15);
+  --accent: #c5ff3d;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+
+/* Selection */
+::selection {
+  background: var(--neon);
+  color: #06121a;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #1f232b;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2b313b;
+}
+
+/* Utility: subtle grid background */
+.bg-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: -1px -1px;
+}
+
+.bg-grid-dense {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Radial vignette to fade grid at edges */
+.mask-radial {
+  -webkit-mask-image: radial-gradient(ellipse at center, black 50%, transparent 80%);
+  mask-image: radial-gradient(ellipse at center, black 50%, transparent 80%);
+}
+
+/* Neon text shadow utility */
+.neon-text {
+  text-shadow: 0 0 24px rgba(0, 229, 255, 0.35);
+}
+
+.neon-ring {
+  box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.4), 0 0 24px rgba(0, 229, 255, 0.18);
+}
+
+/* Scanline overlay */
+.scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.025) 0px,
+    rgba(255, 255, 255, 0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+}
+
+/* Glitch animation */
+@keyframes glitch-shift {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-1px, 1px); }
+  40% { transform: translate(1px, -1px); }
+  60% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, 1px); }
+}
+
+.glitch:hover {
+  animation: glitch-shift 0.25s steps(2) 1;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7); }
+  50% { box-shadow: 0 0 0 8px rgba(0, 229, 255, 0); }
+}
+
+.pulse-dot {
+  animation: pulse-dot 2s ease-out infinite;
+}
+
+@layer base {
+  :root {
+    --background: 230 14% 5%;
+    --foreground: 220 13% 92%;
+    --card: 225 13% 8%;
+    --card-foreground: 220 13% 92%;
+    --popover: 225 13% 8%;
+    --popover-foreground: 220 13% 92%;
+    --primary: 187 100% 50%;
+    --primary-foreground: 222 47% 6%;
+    --secondary: 225 10% 14%;
+    --secondary-foreground: 220 13% 92%;
+    --muted: 225 10% 14%;
+    --muted-foreground: 220 9% 60%;
+    --accent: 225 10% 14%;
+    --accent-foreground: 220 13% 92%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 220 13% 95%;
+    --border: 225 10% 16%;
+    --input: 225 10% 16%;
+    --ring: 187 100% 50%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

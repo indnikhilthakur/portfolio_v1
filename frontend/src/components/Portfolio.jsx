@@ -8,6 +8,9 @@ import Projects from "./Projects";
 import Experience from "./Experience";
 import Contact from "./Contact";
 import Footer from "./Footer";
+import BootSequence from "./effects/BootSequence";
+import SmartCursor from "./effects/SmartCursor";
+import SectionRail from "./effects/SectionRail";
 
 const Portfolio = () => {
   const { scrollYProgress } = useScroll();
@@ -17,48 +20,40 @@ const Portfolio = () => {
     mass: 0.4,
   });
 
-  // Custom cursor (desktop only)
-  const [pos, setPos] = useState({ x: -100, y: -100 });
-  const [enabled, setEnabled] = useState(false);
+  const [booted, setBooted] = useState(
+    typeof window !== "undefined" && !!sessionStorage.getItem("boot_seen")
+  );
 
+  // Hide native cursor while SmartCursor is active (desktop only)
   useEffect(() => {
-    const isFinePointer = window.matchMedia("(pointer: fine)").matches;
-    setEnabled(isFinePointer);
-    if (!isFinePointer) return;
-
-    const move = (e) => setPos({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", move);
-    return () => window.removeEventListener("mousemove", move);
+    if (window.matchMedia("(pointer: fine)").matches) {
+      document.documentElement.classList.add("custom-cursor-on");
+    }
+    return () =>
+      document.documentElement.classList.remove("custom-cursor-on");
   }, []);
 
   return (
     <div className="relative bg-[#08090b] text-white selection:bg-cyan-400 selection:text-[#06121a]">
+      <BootSequence onDone={() => setBooted(true)} />
+
       {/* Top progress bar */}
       <motion.div
         style={{ scaleX }}
         className="fixed top-0 left-0 right-0 h-[2px] bg-cyan-400 origin-left z-[60]"
       />
 
-      {/* Custom cursor */}
-      {enabled && (
-        <>
-          <motion.div
-            aria-hidden
-            animate={{ x: pos.x - 14, y: pos.y - 14 }}
-            transition={{ type: "spring", stiffness: 220, damping: 22, mass: 0.4 }}
-            className="hidden md:block fixed top-0 left-0 w-7 h-7 rounded-full border border-cyan-300/70 pointer-events-none z-[70] mix-blend-difference"
-          />
-          <motion.div
-            aria-hidden
-            animate={{ x: pos.x - 2, y: pos.y - 2 }}
-            transition={{ type: "spring", stiffness: 600, damping: 28 }}
-            className="hidden md:block fixed top-0 left-0 w-1 h-1 rounded-full bg-cyan-300 pointer-events-none z-[70]"
-          />
-        </>
-      )}
+      <SmartCursor />
+      <SectionRail />
 
       <Navbar />
-      <main className="relative">
+      <main
+        className="relative"
+        style={{
+          opacity: booted ? 1 : 0,
+          transition: "opacity 0.6s ease 0.15s",
+        }}
+      >
         <Hero />
         <About />
         <Skills />

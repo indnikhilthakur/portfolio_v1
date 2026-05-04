@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight, MoveRight, MapPin } from "lucide-react";
 import { profile } from "../data/mock";
+import MagneticButton from "./effects/MagneticButton";
+import CountUp from "./effects/CountUp";
+import SplitText from "./effects/SplitText";
 
 const MARQUEE_TAGS = [
   "SNOWFLAKE",
@@ -23,6 +26,15 @@ const MARQUEE_ITEMS = [
 
 const Hero = () => {
   const codeRef = useRef(null);
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const orbY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const orbY2 = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
     if (!codeRef.current) return;
@@ -40,6 +52,7 @@ const Hero = () => {
 
   return (
     <section
+      ref={sectionRef}
       id="top"
       className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-16"
     >
@@ -52,27 +65,32 @@ const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.4 }}
-        className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full"
         style={{
+          y: orbY,
           background:
             "radial-gradient(circle at center, rgba(0,229,255,0.18), transparent 60%)",
           filter: "blur(20px)",
         }}
+        className="absolute -top-40 -left-40 w-[640px] h-[640px] rounded-full"
       />
-      <div
+      <motion.div
         aria-hidden
-        className="absolute bottom-0 right-0 w-[480px] h-[480px] rounded-full opacity-60"
         style={{
+          y: orbY2,
           background:
             "radial-gradient(circle at center, rgba(197,255,61,0.08), transparent 60%)",
           filter: "blur(30px)",
         }}
+        className="absolute bottom-0 right-0 w-[480px] h-[480px] rounded-full opacity-60"
       />
 
       <div className="noise" />
 
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 w-full grid lg:grid-cols-12 gap-10 items-center">
-        <div className="lg:col-span-7">
+        <motion.div
+          style={{ y: heroY, opacity: heroOpacity }}
+          className="lg:col-span-7"
+        >
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
@@ -86,23 +104,29 @@ const Hero = () => {
             </span>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.05 }}
-            className="font-semibold tracking-tight leading-[0.95] text-[clamp(2.6rem,7.5vw,6.2rem)]"
-          >
-            <span className="block text-white/95">{profile.firstName}</span>
+          <h1 className="font-semibold tracking-tight leading-[0.95] text-[clamp(2.6rem,7.5vw,6.2rem)]">
+            <SplitText
+              as="span"
+              text={profile.firstName}
+              className="block text-white/95"
+              stagger={0.04}
+            />
             <span className="block text-white/40">
-              {profile.lastName}
+              <SplitText
+                as="span"
+                text={profile.lastName}
+                className="inline-block"
+                delay={0.18}
+                stagger={0.04}
+              />
               <span className="text-cyan-400 neon-text">.</span>
             </span>
-          </motion.h1>
+          </h1>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.55 }}
             className="mt-6 max-w-xl text-white/70 text-lg leading-relaxed"
           >
             <span className="text-white/90">{profile.role}</span>
@@ -113,19 +137,23 @@ const Hero = () => {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.35 }}
+            transition={{ duration: 0.7, delay: 0.7 }}
             className="mt-10 flex flex-wrap items-center gap-3"
           >
-            <a href="#work" className="btn-neon">
-              View Selected Work
-              <ArrowDownRight className="w-3.5 h-3.5" />
-            </a>
-            <a href="#contact" className="btn-ghost">
-              Get in touch
-              <MoveRight className="w-3.5 h-3.5" />
-            </a>
+            <MagneticButton strength={0.4}>
+              <a href="#work" className="btn-neon" data-cursor="View">
+                View Selected Work
+                <ArrowDownRight className="w-3.5 h-3.5" />
+              </a>
+            </MagneticButton>
+            <MagneticButton strength={0.4}>
+              <a href="#contact" className="btn-ghost" data-cursor="Connect">
+                Get in touch
+                <MoveRight className="w-3.5 h-3.5" />
+              </a>
+            </MagneticButton>
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Right: Terminal card */}
         <motion.div
@@ -181,8 +209,8 @@ const Hero = () => {
                 <div className="font-mono text-[10px] tracking-widest text-white/40 uppercase">
                   {s.label}
                 </div>
-                <div className="mt-1 font-semibold text-white text-lg">
-                  {s.value}
+                <div className="mt-1 font-semibold text-white text-lg tabular-nums">
+                  <CountUp value={s.value} />
                 </div>
               </div>
             ))}

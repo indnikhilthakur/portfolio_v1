@@ -53,6 +53,14 @@ body {
   background: #2b313b;
 }
 
+/* Hide system cursor when SmartCursor is on (desktop fine pointer only) */
+@media (pointer: fine) {
+  html.custom-cursor-on,
+  html.custom-cursor-on * {
+    cursor: none !important;
+  }
+}
+
 /* Utility: subtle grid background */
 .bg-grid {
   background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),

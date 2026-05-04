@@ -2,6 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { projects } from "../data/mock";
+import TiltCard from "./effects/TiltCard";
+import MagneticButton from "./effects/MagneticButton";
 
 const CARD_INITIAL = { opacity: 0, y: 22 };
 const CARD_VISIBLE = { opacity: 1, y: 0 };
@@ -18,26 +20,32 @@ const Projects = () => {
               Things I’ve built and shipped.
             </h2>
           </div>
-          <a href="#contact" className="btn-ghost self-start">
-            Start a project
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </a>
+          <MagneticButton strength={0.4}>
+            <a href="#contact" className="btn-ghost self-start" data-cursor="Connect">
+              Start a project
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
+          </MagneticButton>
         </div>
 
         <div className="grid md:grid-cols-2 gap-5">
           {projects.map((p, i) => (
-            <motion.a
+            <motion.div
               key={p.id}
-              href={p.href}
               initial={CARD_INITIAL}
               whileInView={CARD_VISIBLE}
               viewport={CARD_VIEWPORT}
               transition={{ duration: 0.6, delay: (i % 2) * 0.08 }}
-              className="group relative card-tile corner-brackets rounded-sm overflow-hidden"
             >
-              <div className="relative aspect-[16/10] overflow-hidden bg-[#0c0e12]">
-                <img
-                  src={p.image}
+              <TiltCard max={6} className="h-full">
+                <a
+                  href={p.href}
+                  data-cursor="Open"
+                  className="group relative block card-tile corner-brackets rounded-sm overflow-hidden h-full"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden bg-[#0c0e12]">
+                    <img
+                      src={p.image}
                   alt={p.title}
                   loading="lazy"
                   className="w-full h-full object-cover opacity-70 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700"
@@ -56,30 +64,32 @@ const Projects = () => {
                 </div>
               </div>
 
-              <div className="p-5 md:p-6 border-t border-white/5">
-                <div className="flex items-center justify-between gap-4">
-                  <h3 className="text-white text-xl md:text-2xl font-medium tracking-tight glitch">
-                    {p.title}
-                  </h3>
-                  <span className="font-mono text-[10px] tracking-widest text-white/40 uppercase shrink-0">
-                    {p.role}
-                  </span>
-                </div>
-                <p className="mt-2 text-white/60 text-sm leading-relaxed">
-                  {p.summary}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {p.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="font-mono text-[10.5px] tracking-wide px-2 py-1 border border-white/10 text-white/65 rounded-sm bg-white/[0.02]"
-                    >
-                      {t}
+                <div className="p-5 md:p-6 border-t border-white/5">
+                  <div className="flex items-center justify-between gap-4">
+                    <h3 className="text-white text-xl md:text-2xl font-medium tracking-tight glitch">
+                      {p.title}
+                    </h3>
+                    <span className="font-mono text-[10px] tracking-widest text-white/40 uppercase shrink-0">
+                      {p.role}
                     </span>
-                  ))}
+                  </div>
+                  <p className="mt-2 text-white/60 text-sm leading-relaxed">
+                    {p.summary}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {p.tags.map((t) => (
+                      <span
+                        key={t}
+                        className="font-mono text-[10.5px] tracking-wide px-2 py-1 border border-white/10 text-white/65 rounded-sm bg-white/[0.02]"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </motion.a>
+                </a>
+              </TiltCard>
+            </motion.div>
           ))}
         </div>
       </div>

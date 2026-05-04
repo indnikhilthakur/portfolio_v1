@@ -121,6 +121,9 @@
   animation: marquee 40s linear infinite;
   white-space: nowrap;
 }
+.marquee:hover {
+  animation-play-state: paused;
+}
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }

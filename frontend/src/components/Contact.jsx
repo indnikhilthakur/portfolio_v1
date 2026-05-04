@@ -65,6 +65,7 @@ const Contact = () => {
           <div className="mt-8 space-y-3">
             <button
               onClick={copyEmail}
+              data-cursor="Copy"
               className="group w-full flex items-center justify-between px-4 py-4 border border-white/10 hover:border-cyan-400/40 bg-white/[0.02] hover:bg-cyan-400/[0.04] rounded-sm transition"
             >
               <span className="flex items-center gap-3">
@@ -143,6 +144,7 @@ const Contact = () => {
             <button
               type="submit"
               disabled={sending}
+              data-cursor="Send"
               className="mt-6 btn-neon w-full justify-center disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {sending ? (

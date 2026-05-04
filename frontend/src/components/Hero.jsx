@@ -6,7 +6,8 @@ import MagneticButton from "./effects/MagneticButton";
 import CountUp from "./effects/CountUp";
 import SplitText from "./effects/SplitText";
 import HeroBackground from "./effects/HeroBackground"; // eslint-disable-line no-unused-vars
-import SnowflakeLattice from "./effects/SnowflakeLattice";
+import SnowflakeLattice from "./effects/SnowflakeLattice"; // eslint-disable-line no-unused-vars
+import SpaceGlobe from "./effects/SpaceGlobe";
 
 const MARQUEE_TAGS = [
   "SNOWFLAKE",
@@ -59,11 +60,13 @@ const Hero = () => {
       className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-16"
     >
       {/* Subtle grid base */}
-      <div className="absolute inset-0 bg-grid mask-radial opacity-40" />
+      <div className="absolute inset-0 bg-grid mask-radial opacity-25" />
 
-      {/* Active hero background — Option 1: pure Snowflake Data Lattice */}
-      <SnowflakeLattice />
-      {/* Alt: Hybrid Lattice + Particles. Swap by commenting line above and uncommenting below */}
+      {/* Active hero background — Space + Data Globe */}
+      <SpaceGlobe />
+      {/* Alt 1: pure Snowflake Data Lattice */}
+      {/* <SnowflakeLattice /> */}
+      {/* Alt 2: Hybrid Lattice + Particles */}
       {/* <HeroBackground /> */}
 
       {/* Cyan glow orb */}

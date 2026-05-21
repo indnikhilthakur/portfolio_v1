@@ -155,6 +155,30 @@ export const projects = [
       "https://images.unsplash.com/photo-1643780668909-580822430155?auto=format&fit=crop&w=1400&q=80",
     href: "#",
   },
+  {
+    id: "p07",
+    title: "LinkStash App",
+    summary:
+      "A sleek personal bookmarking and URL sharing hub. Organized by categories and tags with fast client-side filtering, automatic page metadata extraction, and collaborative public collections.",
+    tags: ["React", "Express", "MongoDB", "Node.js", "OAuth"],
+    year: "2024",
+    role: "Creator",
+    image:
+      "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1400&q=80",
+    href: "https://github.com/indnikhilthakur/linkstash",
+  },
+  {
+    id: "p08",
+    title: "Portfolio v1",
+    summary:
+      "Interactive data-processing personal portfolio featuring a real-time rotating 3D particle space globe, connected directly to GitHub repositories via live cron synchronization, styled with premium glassmorphism.",
+    tags: ["React", "FastAPI", "MongoDB", "Vercel", "Canvas"],
+    year: "2026",
+    role: "Creator",
+    image:
+      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1400&q=80",
+    href: "https://github.com/indnikhilthakur/portfolio_v1",
+  },
 ];
 
 export const experience = [

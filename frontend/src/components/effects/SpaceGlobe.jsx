@@ -26,6 +26,60 @@ const SpaceGlobe = () => {
     if (!canvas) return;
     const ctx = canvas.getContext("2d", { alpha: true });
 
+    const defaultStats = {
+      projects: {
+        "p01": { "name": "Flow by Coridors", "commits": 145, "color": "cyan" },
+        "p02": { "name": "RAG Document Assistant", "commits": 42, "color": "violet" },
+        "p03": { "name": "Secure Ingestion Connector", "commits": 38, "color": "emerald" },
+        "p04": { "name": "CARL — Investment App", "commits": 88, "color": "amber" },
+        "p05": { "name": "Autonomous Drone Delivery", "commits": 64, "color": "rose" },
+        "p06": { "name": "Breast Cancer ML Classifier", "commits": 22, "color": "fuchsia" },
+        "p07": { "name": "LinkStash App", "commits": 50, "color": "emerald" },
+        "p08": { "name": "Portfolio v1", "commits": 120, "color": "rose" }
+      },
+      practice: { "leetcode_commits": 145, "hackerrank_commits": 80, "total": 225 }
+    };
+
+    const FIXED_NODES = {
+      p01: { x: 0.8,  y: 0.4,   z: 0.44 },   // Top right front-ish
+      p02: { x: -0.6, y: 0.5,   z: -0.62 },  // Top left back-ish
+      p03: { x: 0.1,  y: -0.8,  z: 0.59 },   // Bottom front
+      p04: { x: -0.7, y: -0.3,  z: 0.64 },   // Bottom-left front-ish
+      p05: { x: 0.5,  y: 0.2,   z: -0.84 },  // Right back-ish
+      p06: { x: -0.3, y: -0.6,  z: -0.74 },  // Bottom-left back-ish
+      p07: { x: 0.5,  y: -0.4,  z: -0.76 },  // Right, lower back-ish
+      p08: { x: -0.8, y: 0.2,   z: 0.57 },   // Left, middle front-ish
+      practice_hub: { x: 0.0, y: 0.6, z: 0.8 } // Top center front (very prominent!)
+    };
+
+    const getDynamicProjectPos = (id) => {
+      let hash = 0;
+      for (let i = 0; i < id.length; i++) {
+        hash = id.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const y = ((Math.abs(hash) % 100) / 50) - 1; // -1 to 1
+      const theta = ((Math.abs(hash >> 8) % 100) / 100) * Math.PI * 2;
+      const radius = Math.sqrt(1 - y * y);
+      return {
+        x: Math.cos(theta) * radius,
+        y,
+        z: Math.sin(theta) * radius
+      };
+    };
+
+    const colorMap = {
+      cyan: { primary: "#00e5ff", glow: "rgba(0, 229, 255, 0.4)", text: "#e0f7fc" },
+      violet: { primary: "#d946ef", glow: "rgba(217, 70, 239, 0.4)", text: "#fdf4ff" },
+      emerald: { primary: "#10b981", glow: "rgba(16, 185, 129, 0.4)", text: "#ecfdf5" },
+      amber: { primary: "#f59e0b", glow: "rgba(245, 158, 11, 0.4)", text: "#fffbeb" },
+      rose: { primary: "#f43f5e", glow: "rgba(244, 63, 94, 0.4)", text: "#fff1f2" },
+      fuchsia: { primary: "#a855f7", glow: "rgba(168, 85, 247, 0.4)", text: "#faf5ff" }
+    };
+
+    const getColorTheme = (colorName) => {
+      return colorMap[colorName.toLowerCase()] || colorMap.cyan;
+    };
+
     const state = {
       w: 0,
       h: 0,
@@ -34,6 +88,8 @@ const SpaceGlobe = () => {
       stars: [],
       shooters: [],
       points: [],
+      activeNodes: [],
+      nodeParticles: [],
       arcs: [],
       gridLat: [],
       gridLon: [],
@@ -41,6 +97,7 @@ const SpaceGlobe = () => {
       cx: 0,
       cy: 0,
       r: 0,
+      stats: defaultStats
     };
 
     const isMobile = () => window.innerWidth < 768;
@@ -58,11 +115,54 @@ const SpaceGlobe = () => {
           x: Math.cos(theta) * radius,
           y,
           z: Math.sin(theta) * radius,
-          baseSize: 0.6 + Math.random() * 1.4,
+          baseSize: 0.4 + Math.random() * 0.8,
           phase: Math.random() * Math.PI * 2,
         });
       }
       state.points = arr;
+    };
+
+    const buildActiveNodes = () => {
+      const stats = state.stats || defaultStats;
+      const nodes = [];
+
+      // 1. Core and dynamic projects
+      Object.entries(stats.projects).forEach(([pid, proj]) => {
+        let pos = FIXED_NODES[pid];
+        if (!pos) {
+          pos = getDynamicProjectPos(pid);
+        }
+        nodes.push({
+          id: pid,
+          name: proj.name,
+          x: pos.x,
+          y: pos.y,
+          z: pos.z,
+          commits: proj.commits,
+          color: proj.color || "cyan",
+          phase: Math.random() * Math.PI * 2,
+          isPractice: false
+        });
+      });
+
+      // 2. Practice hub node
+      const practice = stats.practice || { leetcode_commits: 145, hackerrank_commits: 80, total: 225 };
+      const hubPos = FIXED_NODES.practice_hub;
+      nodes.push({
+        id: "practice_hub",
+        name: "Practice Hub",
+        x: hubPos.x,
+        y: hubPos.y,
+        z: hubPos.z,
+        commits: practice.total,
+        leetcodeCommits: practice.leetcode_commits,
+        hackerrankCommits: practice.hackerrank_commits,
+        color: "emerald",
+        phase: Math.random() * Math.PI * 2,
+        isPractice: true
+      });
+
+      state.activeNodes = nodes;
     };
 
     const buildGridLines = () => {
@@ -139,6 +239,23 @@ const SpaceGlobe = () => {
     // Build once.
     buildPoints();
     buildGridLines();
+    buildActiveNodes();
+
+    // Fetch live stats
+    fetch("/api/globe-stats")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data.projects && data.practice) {
+          state.stats = data;
+          buildActiveNodes();
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not fetch live globe stats, using local defaults:", err);
+      });
 
     // ---- Mouse -------------------------------------------------------------
     const onMove = (e) => {
@@ -164,31 +281,55 @@ const SpaceGlobe = () => {
     // ---- Arc spawning -------------------------------------------------------
     let arcCooldown = 600;
     const spawnArc = () => {
-      const pts = state.points;
-      if (pts.length < 2) return;
-      const a = pts[(Math.random() * pts.length) | 0];
-      const b = pts[(Math.random() * pts.length) | 0];
-      if (a === b) return;
-      // Build N intermediate points along the great-circle arc (slerp).
-      const dot = a.x * b.x + a.y * b.y + a.z * b.z;
+      const activeNodes = state.activeNodes;
+      if (!activeNodes || activeNodes.length < 2) return;
+
+      // Select starting active node, favoring ones with higher commits
+      let totalCommits = activeNodes.reduce((sum, n) => sum + (n.commits || 5), 0);
+      if (totalCommits <= 0) totalCommits = 1;
+      let rand = Math.random() * totalCommits;
+      let startNode = activeNodes[0];
+      let runningSum = 0;
+      for (const n of activeNodes) {
+        runningSum += (n.commits || 5);
+        if (rand <= runningSum) {
+          startNode = n;
+          break;
+        }
+      }
+
+      // Target can be any other active node
+      const otherNodes = activeNodes.filter((n) => n.id !== startNode.id);
+      if (otherNodes.length === 0) return;
+      const endNode = otherNodes[(Math.random() * otherNodes.length) | 0];
+
+      // Build great-circle arc (slerp)
+      const dot = startNode.x * endNode.x + startNode.y * endNode.y + startNode.z * endNode.z;
       const omega = Math.acos(Math.max(-1, Math.min(1, dot)));
-      if (omega < 0.4) return; // skip arcs that are too short
+      if (omega < 0.3) return; // skip if too close
+
       const sinO = Math.sin(omega);
-      const segs = 36;
+      const segs = 40;
       const path = [];
       for (let i = 0; i <= segs; i++) {
         const t = i / segs;
         const s1 = Math.sin((1 - t) * omega) / sinO;
         const s2 = Math.sin(t * omega) / sinO;
-        // Lift slightly off the sphere to suggest an arc above the surface.
-        const lift = 1 + 0.18 * Math.sin(t * Math.PI);
+        // Lift slightly off the sphere, making a beautiful arching trajectory
+        const lift = 1 + 0.15 * Math.sin(t * Math.PI);
         path.push({
-          x: (a.x * s1 + b.x * s2) * lift,
-          y: (a.y * s1 + b.y * s2) * lift,
-          z: (a.z * s1 + b.z * s2) * lift,
+          x: (startNode.x * s1 + endNode.x * s2) * lift,
+          y: (startNode.y * s1 + endNode.y * s2) * lift,
+          z: (startNode.z * s1 + endNode.z * s2) * lift,
         });
       }
-      state.arcs.push({ path, t: 0, life: 1.6 });
+
+      state.arcs.push({
+        path,
+        t: 0,
+        life: 1.4 + Math.random() * 0.6,
+        color: startNode.color
+      });
     };
 
     // ---- Render -------------------------------------------------------------
@@ -373,51 +514,179 @@ const SpaceGlobe = () => {
         ctx.stroke();
       }
 
-      // Data points
+      // Data points (background lattice)
       for (let i = 0; i < points.length; i++) {
         const p = points[i];
         const sp = toScreen(p);
         const front = sp.z > 0;
-        const breathe = 0.6 + 0.4 * Math.sin(now * 0.0012 + p.phase);
+        const breathe = 0.6 + 0.4 * Math.sin(now * 0.001 + p.phase);
         if (front) {
-          // glow
-          ctx.fillStyle = `rgba(0, 229, 255, ${0.18 * breathe})`;
+          ctx.fillStyle = `rgba(0, 180, 216, ${0.08 * breathe})`;
           ctx.beginPath();
-          ctx.arc(sp.x, sp.y, p.baseSize * 4, 0, Math.PI * 2);
+          ctx.arc(sp.x, sp.y, p.baseSize * 2.5, 0, Math.PI * 2);
           ctx.fill();
         }
         ctx.fillStyle = front
-          ? `rgba(190, 245, 255, ${0.55 + breathe * 0.4})`
-          : `rgba(120, 180, 220, 0.12)`;
+          ? `rgba(140, 220, 240, ${0.25 + breathe * 0.15})`
+          : `rgba(80, 140, 180, 0.04)`;
         ctx.beginPath();
-        ctx.arc(sp.x, sp.y, p.baseSize * (front ? 1.1 : 0.7), 0, Math.PI * 2);
+        ctx.arc(sp.x, sp.y, p.baseSize * (front ? 0.8 : 0.5), 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      // Draw active nodes (Project Zones & Practice Hub)
+      for (let i = 0; i < state.activeNodes.length; i++) {
+        const node = state.activeNodes[i];
+        const sp = toScreen(node);
+        const front = sp.z > 0;
+
+        if (!front) {
+          ctx.fillStyle = "rgba(120, 180, 220, 0.08)";
+          ctx.beginPath();
+          ctx.arc(sp.x, sp.y, 2.0, 0, Math.PI * 2);
+          ctx.fill();
+          continue;
+        }
+
+        const theme = getColorTheme(node.color);
+        const baseSize = node.isPractice ? 3.5 : 2.5;
+        const commits = node.commits || 0;
+        const scale = Math.log(commits + 1) * 1.2;
+        const radius = baseSize + scale;
+
+        // Dynamic breathe speed & amplitude based on commits
+        const breatheSpeed = 0.0012 + Math.min(0.003, commits * 0.00001);
+        const breathe = 0.5 + 0.5 * Math.sin(now * breatheSpeed + node.phase);
+
+        // 1. Large glowing ambient aura
+        const glowGrd = ctx.createRadialGradient(
+          sp.x, sp.y, radius * 0.5,
+          sp.x, sp.y, radius * (2.2 + 1.2 * breathe)
+        );
+        glowGrd.addColorStop(0, theme.glow.replace("0.4", (0.35 + breathe * 0.15).toString()));
+        glowGrd.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+        ctx.fillStyle = glowGrd;
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, radius * (2.2 + 1.2 * breathe), 0, Math.PI * 2);
+        ctx.fill();
+
+        // 2. Main node core
+        ctx.fillStyle = theme.primary;
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 3. Inner highlight center
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, radius * 0.45, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4. Premium text labels
+        if (sp.z > 0.45) {
+          ctx.fillStyle = theme.text;
+          ctx.font = "500 9px 'Outfit', 'Inter', sans-serif";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+
+          const text = node.isPractice
+            ? `${node.name} (${node.commits} solved)`
+            : `${node.name} [${node.commits}]`;
+          ctx.fillText(text, sp.x + radius + 6, sp.y);
+
+          // Add a tiny pointer line
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 * sp.z})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(sp.x + radius + 1, sp.y);
+          ctx.lineTo(sp.x + radius + 4, sp.y);
+          ctx.stroke();
+        }
+      }
+
+      // Spawn custom particles from active nodes based on commit count
+      if (Math.random() < 0.3) {
+        state.activeNodes.forEach((node) => {
+          const commits = node.commits || 0;
+          const spawnChance = Math.min(0.7, (commits * 0.0018) + 0.02);
+          if (Math.random() < spawnChance) {
+            const speed = 0.008 + Math.random() * 0.012;
+            const vx = node.x * speed + (Math.random() - 0.5) * 0.008;
+            const vy = node.y * speed + (Math.random() - 0.5) * 0.008;
+            const vz = node.z * speed + (Math.random() - 0.5) * 0.008;
+
+            state.nodeParticles.push({
+              x: node.x,
+              y: node.y,
+              z: node.z,
+              vx,
+              vy,
+              vz,
+              color: node.color,
+              life: 1.0,
+              decay: 0.02 + Math.random() * 0.03
+            });
+          }
+        });
+      }
+
+      // Update and draw node particles zipping outwards
+      for (let i = state.nodeParticles.length - 1; i >= 0; i--) {
+        const p = state.nodeParticles[i];
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.z += p.vz * dt;
+        p.life -= p.decay * dt;
+
+        if (p.life <= 0) {
+          state.nodeParticles.splice(i, 1);
+          continue;
+        }
+
+        const sp = toScreen(p);
+        if (sp.z <= 0) continue; // Skip back hemisphere
+
+        const theme = getColorTheme(p.color || "cyan");
+        ctx.fillStyle = theme.primary;
+        ctx.beginPath();
+        const size = Math.max(0.4, p.life * 1.5);
+        ctx.arc(sp.x, sp.y, size, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (size > 0.9) {
+          ctx.fillStyle = theme.glow.replace("0.4", (p.life * 0.25).toString());
+          ctx.beginPath();
+          ctx.arc(sp.x, sp.y, size * 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       // Spawn arcs periodically
       arcCooldown -= 16 * dt;
       if (arcCooldown <= 0) {
         spawnArc();
-        arcCooldown = 700 + Math.random() * 900;
+        arcCooldown = 600 + Math.random() * 800;
       }
 
       // Draw arcs (animated growing trail with glowing head)
       for (let i = arcs.length - 1; i >= 0; i--) {
         const a = arcs[i];
-        a.t += 0.015 * dt;
+        a.t += 0.012 * dt;
         if (a.t >= a.life) {
           arcs.splice(i, 1);
           continue;
         }
-        const lifeFade =
-          a.t < 1 ? 1 : Math.max(0, 1 - (a.t - 1) / (a.life - 1));
+        const lifeFade = a.t < 1 ? 1 : Math.max(0, 1 - (a.t - 1) / (a.life - 1));
         const head = Math.min(a.t, 1);
         const segs = a.path.length - 1;
         const headIdx = Math.floor(head * segs);
 
+        const theme = getColorTheme(a.color || "cyan");
+
         // Trail polyline
-        ctx.lineWidth = 1.3;
-        ctx.strokeStyle = `rgba(0, 229, 255, ${0.55 * lifeFade})`;
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = theme.glow.replace("0.4", (0.5 * lifeFade).toString());
         ctx.beginPath();
         let started = false;
         for (let j = 0; j <= headIdx; j++) {
@@ -434,13 +703,14 @@ const SpaceGlobe = () => {
         // Glowing head
         if (headIdx < a.path.length) {
           const sp = toScreen(a.path[Math.min(headIdx, a.path.length - 1)]);
-          ctx.fillStyle = `rgba(180, 245, 255, ${0.95 * lifeFade})`;
+          ctx.fillStyle = `#ffffff`;
           ctx.beginPath();
-          ctx.arc(sp.x, sp.y, 2.4, 0, Math.PI * 2);
+          ctx.arc(sp.x, sp.y, 2.0, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = `rgba(0, 229, 255, ${0.4 * lifeFade})`;
+
+          ctx.fillStyle = theme.primary;
           ctx.beginPath();
-          ctx.arc(sp.x, sp.y, 6, 0, Math.PI * 2);
+          ctx.arc(sp.x, sp.y, 4.5, 0, Math.PI * 2);
           ctx.fill();
         }
       }

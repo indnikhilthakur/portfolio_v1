@@ -15,15 +15,6 @@ function App() {
       <Toaster
         theme="dark"
         position="bottom-right"
-        toastOptions={{
-          style: {
-            background: "#0d0f13",
-            border: "1px solid rgba(0, 229, 255, 0.25)",
-            color: "#e7e9ee",
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: "0.78rem",
-          },
-        }}
       />
     </div>
   );

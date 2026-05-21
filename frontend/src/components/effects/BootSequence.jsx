@@ -15,11 +15,14 @@ const BootSequence = ({ onDone }) => {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    if (sessionStorage.getItem("boot_seen")) {
-      setVisible(false);
-      if (onDone) onDone();
-      return;
-    }
+    try {
+      if (sessionStorage.getItem("boot_seen")) {
+        setVisible(false);
+        if (onDone) onDone();
+        return;
+      }
+    } catch (e) {}
+
     const stepTimer = setInterval(() => {
       setStep((s) => {
         if (s >= LINES.length) {
@@ -30,7 +33,9 @@ const BootSequence = ({ onDone }) => {
       });
     }, 180);
     const exitTimer = setTimeout(() => {
-      sessionStorage.setItem("boot_seen", "1");
+      try {
+        sessionStorage.setItem("boot_seen", "1");
+      } catch (e) {}
       setVisible(false);
       if (onDone) onDone();
     }, 1700);

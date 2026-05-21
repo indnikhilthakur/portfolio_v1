@@ -4,7 +4,11 @@
     {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "build", "buildCommand": "npm install --legacy-peer-deps && npm run build" }
+      "config": { 
+        "distDir": "build", 
+        "installCommand": "npm install --legacy-peer-deps",
+        "buildCommand": "CI=false npm run build" 
+      }
     },
     {
       "src": "api/index.py",
@@ -17,8 +21,12 @@
       "dest": "api/index.py"
     },
     {
-      "src": "/(.*)",
-      "dest": "frontend/$1"
+      "src": "/static/(.*)",
+      "dest": "frontend/static/$1"
+    },
+    {
+      "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|ico|json|svg|woff|woff2|ttf|eot|txt)",
+      "dest": "frontend/$1.$2"
     },
     {
       "src": "/(.*)",

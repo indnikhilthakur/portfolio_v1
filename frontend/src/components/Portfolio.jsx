@@ -20,17 +20,28 @@ const Portfolio = () => {
     mass: 0.4,
   });
 
-  const [booted, setBooted] = useState(
-    typeof window !== "undefined" && !!sessionStorage.getItem("boot_seen")
-  );
+  const [booted, setBooted] = useState(() => {
+    try {
+      return typeof window !== "undefined" && !!sessionStorage.getItem("boot_seen");
+    } catch (e) {
+      return false;
+    }
+  });
 
   // Hide native cursor while SmartCursor is active (desktop only)
   useEffect(() => {
-    if (window.matchMedia("(pointer: fine)").matches) {
-      document.documentElement.classList.add("custom-cursor-on");
+    try {
+      if (typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches) {
+        document.documentElement.classList.add("custom-cursor-on");
+      }
+    } catch (e) {
+      console.warn("Cursor enhancement disabled", e);
     }
-    return () =>
-      document.documentElement.classList.remove("custom-cursor-on");
+    return () => {
+      try {
+        document.documentElement.classList.remove("custom-cursor-on");
+      } catch (e) {}
+    };
   }, []);
 
   return (
